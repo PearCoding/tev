@@ -44,7 +44,7 @@ ImageViewer::ImageViewer(const shared_ptr<BackgroundImagesLoader>& imagesLoader,
     horizontalScreenSplit->setLayout(new BoxLayout{Orientation::Horizontal, Alignment::Fill});
 
     mSidebar = new Widget{horizontalScreenSplit};
-    mSidebar->setFixedWidth(240);
+    mSidebar->setFixedWidth(250);
 
     mHelpButton = new Button{mSidebar, "", ENTYPO_ICON_HELP};
     mHelpButton->setCallback([this]() { toggleHelpWindow(); });
@@ -288,7 +288,16 @@ ImageViewer::ImageViewer(const shared_ptr<BackgroundImagesLoader>& imagesLoader,
             "i\n\n"
 
             "SQR (Squared image)\n"
-            "i^2"
+            "i^2\n\n"
+
+            "C10 (Clip at 10)\n"
+            "min(i,10)\n\n"
+
+            "C100 (Clip at 100)\n"
+            "min(i,100)\n\n"
+
+            "MAG (3D Vector magnitude)\n"
+            "norm(i)"
         );
     }
 
