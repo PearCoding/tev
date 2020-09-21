@@ -630,31 +630,39 @@ bool ImageViewer::keyboardEvent(int key, int scancode, int action, int modifiers
         return true;
     }
 
-    int numGroups = mGroupButtonContainer->childCount();
+    const int numGroups = mGroupButtonContainer->childCount();
+
+    const auto handle_num = [&](int idx) {
+        if (modifiers & GLFW_MOD_SHIFT) {
+            const auto& image = nthVisibleImage(idx);
+            if (image) {
+                if (mCurrentReference == image) {
+                    selectReference(nullptr);
+                } else {
+                    selectReference(image);
+                }
+            }
+        } else if (modifiers & GLFW_MOD_CONTROL) {
+            if (idx >= 0 && idx < numGroups) {
+                selectGroup(nthVisibleGroup(idx));
+            }
+        } else {
+            const auto& image = nthVisibleImage(idx);
+            if (image) {
+                selectImage(image);
+            }
+        }
+    };
 
     // Keybindings which should _not_ respond to repeats
     if (action == GLFW_PRESS) {
         if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
             int idx = (key - GLFW_KEY_1 + 10) % 10;
-            if (modifiers & GLFW_MOD_SHIFT) {
-                const auto& image = nthVisibleImage(idx);
-                if (image) {
-                    if (mCurrentReference == image) {
-                        selectReference(nullptr);
-                    } else {
-                        selectReference(image);
-                    }
-                }
-            } else if (modifiers & GLFW_MOD_CONTROL) {
-                if (idx >= 0 && idx < numGroups) {
-                    selectGroup(nthVisibleGroup(idx));
-                }
-            } else {
-                const auto& image = nthVisibleImage(idx);
-                if (image) {
-                    selectImage(image);
-                }
-            }
+            handle_num(idx);
+            return true;
+        } else if (key >= GLFW_KEY_KP_0 && key <= GLFW_KEY_KP_9) {
+            int idx = (key - GLFW_KEY_KP_1 + 10) % 10;
+            handle_num(idx);
             return true;
         } else if (key == GLFW_KEY_HOME || key == GLFW_KEY_END) {
             const auto& image = nthVisibleImage(key == GLFW_KEY_HOME ? 0 : mImages.size());
